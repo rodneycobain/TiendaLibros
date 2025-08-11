@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -38,6 +40,7 @@ public class LibroForm extends JFrame {
                 cargarLibroSeleccionado();
             }
         });
+        modificarButton.addActionListener(e ->modificarLibro());
     }
 
     private void iniciarForma(){
@@ -96,6 +99,33 @@ public class LibroForm extends JFrame {
                     tablaLibros.getModel().getValueAt(renglon, 4).toString();
             existenciasTexto.setText(existencias);
         }
+    }
+
+    private void modificarLibro(){
+        if (this.idTexto.getText().equals("")){
+                mostrarMensaje("Debe seleccionar un registro...");
+        }
+        else{
+            //Verificamos que nombre del libro no sea nulo
+            if(libroTexto.getText().equals("")){
+                mostrarMensaje("Proporciona el nombre del Libro...");
+                libroTexto.requestFocusInWindow();
+                return;
+            }
+            //llenamos el objeto libro a actualizar
+            int idLibro = Integer.parseInt(idTexto.getText());
+            var nombreLibro = libroTexto.getText();
+            var autor = autorTexto.getText();
+            var precio = Double.parseDouble(precioTexto.getText());
+            var existencias = Integer.parseInt(existenciasTexto.getText());
+            var libro =
+                    new Libro(idLibro, nombreLibro, autor, precio, existencias);
+            libroServicio.guardarLibro(libro);
+            mostrarMensaje("Se modifico el libro....");
+            limpiarFormulario();
+            listarLibros();
+        }
+
     }
 
     private void limpiarFormulario(){
